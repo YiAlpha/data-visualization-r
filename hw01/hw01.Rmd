@@ -115,7 +115,7 @@ index <- three%>%select(NOC, Event, Medal)%>%
         replace_na(list(Population = 0, `GDP per Capita` = 0))
 ```
 
-```{r, eval = FALSE}
+```{r}
 
 # un_rank:
 rank<-index%>%group_by(region)%>%
@@ -128,7 +128,6 @@ emoji_label<-c(emoji("1st_place_medal"),
                emoji("3rd_place_medal"),
                rep(emoji("thumbsup"),7)) 
 
-list.emojifonts()
 load.emojifont("EmojiOne.ttf")
 
 
@@ -149,11 +148,11 @@ unadjusted<-rank%>%select(region,unadjusted)%>%
         theme(plot.title = element_text(hjust = 0.5),
               plot.subtitle = element_text(hjust = 0.5))
 
-pdf("./figures/unadjusted.pdf", width=7, height=7)
-unadjusted
-dev.off()
+# pdf("./figures/unadjusted.pdf", width=7, height=7)
+# unadjusted
+# dev.off()
                
-quartz()
+
 gdp<-rank%>%select(region,adj_gdp)%>%filter(is.finite(adj_gdp))%>%
         arrange(desc(adj_gdp))%>%slice(1:10)%>%
         bind_cols(as_tibble(emoji_label))%>%
@@ -170,9 +169,9 @@ gdp<-rank%>%select(region,adj_gdp)%>%filter(is.finite(adj_gdp))%>%
         theme(plot.title = element_text(hjust = 0.5),
               plot.subtitle = element_text(hjust = 0.5))
 
-pdf("./figures/gdp.pdf", width=7, height=7)
-gdp
-dev.off()
+# pdf("./figures/gdp.pdf", width=7, height=7)
+# gdp
+# dev.off()
              
 
 pop<-rank%>%select(region,adj_pop)%>%filter(is.finite(adj_pop))%>%
@@ -190,9 +189,9 @@ pop<-rank%>%select(region,adj_pop)%>%filter(is.finite(adj_pop))%>%
         theme(plot.title = element_text(hjust = 0.5),
               plot.subtitle = element_text(hjust = 0.5))
 
-pdf("./figures/pop.pdf", width=7, height=7)
-pop
-dev.off()
+# pdf("./figures/pop.pdf", width=7, height=7)
+# pop
+# dev.off()
 
         
 ```
@@ -292,7 +291,7 @@ player_host %>%
 4. Most successful athletes
 Now, let’s look at the most successful athletes. Provide a visual display of the most successful athletes of all time.
 
-```{r, eval=FALSE}
+```{r}
 athlete<-event%>%
         select(Name, Medal, Event, Games)%>%
         mutate(medal_count = case_when(Medal == "Gold" ~ 3,
@@ -318,9 +317,9 @@ ath<-athlete%>%
         theme(plot.title = element_text(hjust = 0.5),
               plot.subtitle = element_text(hjust = 0.5))
 
-pdf("./figures/ath.pdf", width=9, height=6)
-ath
-dev.off()
+# pdf("./figures/ath.pdf", width=9, height=6)
+#ath
+# dev.off()
 ```
 
 ```{r, echo=FALSE, fig.align = 'center', fig.cap="Ajusted by Population", out.width = '100%'}
