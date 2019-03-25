@@ -12,3 +12,6 @@ forcats
 sp
 rgdal
 tmap
+ggmap
+leaflet
+RColorBrewer
