@@ -1,6 +1,8 @@
 # Data Visualization in R
 Data Visualization is way to communicate statistical analysis results and substantial insights to specialized and general audience.
 
+Project Menu: https://yialpha.github.io/data-visualization-r/
+
 This repository presents four visualization projects on numerical, geographical, text and network data analysis.
 
 You can look at the graphics and my write-up by clicking the link in the title of projects below. All the code are stored in project folder `rmd` file.
