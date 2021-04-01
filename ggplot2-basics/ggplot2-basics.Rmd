@@ -1,0 +1,191 @@
+---
+title: "Visualization Basics: Summer Olympics"
+author: "YI YIN"
+date: 2019-02-24
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+editor_options: 
+  chunk_output_type: console
+---
+
+# Scope
+
+Analyze data sets about the history of Summer Olympics Medals by Year, Country, Event and Gender.
+
+- Medals by Country
+- Adjust Population and GDP
+- Fun Version with Emoji
+```{r Setup, include=FALSE, results='hide', warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.path="figures/",
+               cache.path="cache/",
+               cache=FALSE,
+               echo=FALSE,
+               message=FALSE,
+               warning=FALSE)  
+```  
+
+## Medals by Country
+```{r}
+library(tidyverse)
+library(plotly)
+
+```
+
+
+
+```{r}
+event <- read_csv("athletes_and_events.csv")
+region <- read_csv("noc_regions.csv")
+gdp <- read_csv("gdp_pop.csv")
+gdp<-dplyr::rename(gdp,NOC = Code)
+region_gdp <-left_join(region, gdp)
+three <- left_join(event, region_gdp)
+```
+
+Calculate a summary of how many summer games each country competed in, and how many medals of each type the country won. 
+
+```{r}
+by_country <- three%>%select(Country, Event, Medal)%>%
+        group_by(Country)
+
+        
+count_country <- by_country%>%
+        mutate(medal_count = ifelse(is.na(Medal),0,1))%>%     
+                summarise(n_game = n(), n_medal = sum(medal_count))
+                
+
+```
+
+
+Use that summary to provide a visual comparison of medal count by country
+```{r}
+
+medals<-count_country%>%
+        na.omit()%>%
+        top_n(10, n_medal)%>%
+        ggplot(aes(y= n_medal, x=reorder(Country, n_medal)))+
+        geom_bar(stat = "identity")+coord_flip()+
+        labs(title = "Medal Count by Country (Top 10)",
+             x="", y="")+
+        theme_bw(base_size = 12, base_family = "Palatino")+
+        theme(plot.title = element_text(hjust = 0.5))
+ggplotly(medals)
+
+```
+
+
+Currently, the medal data contains information on each athlete competing, including for team events. For example, in 2016 China received 12 gold medals for their women’s win in volleyball alone. Since this is usually not how it is done in official medal statistics, try to wrangle the data so that team events are counted as a single medal.
+
+```{r}
+
+by_countem <- three%>%select(Country, Event, Medal)%>%
+        group_by(Country)%>%
+        distinct(Country,Event,.keep_all=TRUE)%>%
+        mutate(medal_count = ifelse(is.na(Medal),0,1))%>%     
+                summarise(n_game = n(), n_medal = sum(medal_count))
+
+by_countem%>%
+        na.omit()%>%
+        top_n(10, n_medal)%>%
+        ggplot(aes(y= n_medal, x=reorder(Country, n_medal)))+
+        geom_bar(stat = "identity")+coord_flip()+
+        labs(x = "", y="",
+             title = "Medal Count by Country (Top 10)", 
+             caption = "Team medals count as one medal")+
+        theme_bw(base_size = 12, base_family = "Palatino")+
+        theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+## Adjust by Medal Counts by Population, GDP
+
+```{r}
+
+index <- three%>%select(NOC, Event, Medal)%>%
+        group_by(NOC)%>%
+        distinct(NOC,Event,.keep_all=TRUE)%>%
+        mutate(medal_count = case_when(Medal == "Gold" ~ 3,
+                                       Medal == "Silver" ~ 2,
+                                       Medal == "Bronze" ~ 1,
+                                       TRUE ~ 0))%>%     
+                summarise(n_game = n(), 
+                          n_medal =sum(medal_count))%>%
+        left_join(region_gdp)%>%
+        replace_na(list(Population = 0, `GDP per Capita` = 0))
+```
+
+```{r}
+
+# un_rank:
+rank<-index%>%group_by(region)%>%
+        summarise(unadjusted = sum(n_medal),
+                   adj_gdp =sum(n_medal)/sum(`GDP per Capita`),
+                  adj_pop = sum(n_medal)/sum(Population))
+
+
+
+rank%>%select(region,unadjusted)%>%
+        arrange(desc(unadjusted))%>%
+        slice(1:10)%>%
+        ggplot(aes(x=reorder(region,unadjusted), 
+                   y= unadjusted))+
+        coord_flip()+
+  geom_bar(stat="identity", fill='#42a5f5')+
+        labs(x = "", y="",
+             title = "The United Nations of Olympics ",
+             subtitle = "Unadjusted Medal Count by Country (Top 10)", 
+             caption = "Team medals count as one medal")+
+        theme_bw(base_size = 12, base_family = "Palatino")+
+        theme(plot.title = element_text(hjust = 0.5),
+              plot.subtitle = element_text(hjust = 0.5))
+ 
+
+rank%>%select(region,adj_gdp)%>%filter(is.finite(adj_gdp))%>%
+        arrange(desc(adj_gdp))%>%slice(1:10)%>%
+        ggplot(aes(x=reorder(region,adj_gdp), 
+                   y= adj_gdp))+
+  geom_bar(stat="identity", fill='#7986cb')+
+        coord_flip()+
+        labs(x = "", y="",
+             title = "The Most Efficient Trainer -- Russia",
+             subtitle = "Medal Ajdusted by GDP Country Rank (Top 10)",
+             caption = "Medal/ GDP per Capita")+
+        theme_bw(base_size = 12, base_family = "Palatino")+
+        theme(plot.title = element_text(hjust = 0.5),
+              plot.subtitle = element_text(hjust = 0.5))
+             
+
+rank%>%select(region,adj_pop)%>%filter(is.finite(adj_pop))%>%
+        arrange(desc(adj_pop))%>%slice(1:10)%>%
+        ggplot(aes(x=reorder(region,adj_pop), 
+                   y= adj_pop))+
+        geom_bar(stat="identity", fill='#4db6ac')+
+        coord_flip()+
+        labs(x = "", y="",
+             title = "North Europe: Sports Lovers or Smart Trainers ?",
+             subtitle = "Medal Ajdusted by Population Country Rank (Top 10)",
+             caption = "Medal/ Population")+
+        theme_bw(base_size = 12, base_family = "Palatino")+
+        theme(plot.title = element_text(hjust = 0.5),
+              plot.subtitle = element_text(hjust = 0.5))
+
+
+        
+```
+
+## Fun Version with Emoji
+```{r, echo=FALSE, fig.align = 'center', fig.cap="Unajusted", out.width = '60%'}
+knitr::include_graphics('./figures/unadjusted.png')
+```
+
+```{r, echo=FALSE, fig.align = 'center', fig.cap="Ajusted by GDP", out.width = '60%'}
+knitr::include_graphics('./figures/gdp.png')
+```
+
+
+```{r, echo=FALSE, fig.align = 'center', fig.cap="Ajusted by Population", out.width = '60%'}
+knitr::include_graphics('./figures/pop.png')
+```

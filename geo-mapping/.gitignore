@@ -1,0 +1,12 @@
+parking/
+police_precincts/
+*.csv
+*.RDS
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+/cache/
+/figures/
+my_key.txt
+*.Rproj

@@ -1,0 +1,10 @@
+kickstarter_projects.csv
+*.csv
+*.RDS
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+/cache/
+/figures/
+*.Rproj

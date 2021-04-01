@@ -1,0 +1,9 @@
+*.csv
+*.RDS
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+/cache/
+/figures/
+*.Rproj
