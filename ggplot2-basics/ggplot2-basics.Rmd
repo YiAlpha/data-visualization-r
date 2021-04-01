@@ -1,7 +1,7 @@
 ---
 title: "Visualization Basics: Summer Olympics"
 author: "YI YIN"
-date: 2019-02-24
+date: 02/24/2019
 output:
   prettydoc::html_pretty:
     theme: architect
@@ -25,7 +25,7 @@ opts_chunk$set(fig.path="figures/",
                echo=FALSE,
                message=FALSE,
                warning=FALSE)  
-```  
+```
 
 ## Medals by Country
 ```{r}
