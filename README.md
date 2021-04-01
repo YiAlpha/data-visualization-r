@@ -15,6 +15,8 @@ Analyze data sets about the history of Summer Olympics Medals by Year, Country, 
 - Adjust Population and GDP
 - Fun Version with Emoji
 
+![1](thumbnails/1.png)
+
 ## [Geographical Mapping](https://yialpha.github.io/data-visualization-r/geo-mapping/)
 
 Find patterns in parking violations in NYC
@@ -24,6 +26,10 @@ Find patterns in parking violations in NYC
 - Use geo-coding API to locate address for mapping
 - Interactive map with hover-over information
 - Interactive map with clustering
+
+![2](thumbnails/2.png)
+
+
 
 ## [Text Analysis](https://yialpha.github.io/data-visualization-r/visualize-text/)
 
@@ -35,6 +41,8 @@ The stories of successful and unsuccessful kickstar project
 - Language Readability Measure
 - Sentiment Analysis
 
+![3](thumbnails/3.png)
+
 ## [Network Graph](https://yialpha.github.io/data-visualization-r/network-graph/) 
 
 The interaction between U.S. Senators on Twitter
@@ -45,3 +53,5 @@ The interaction between U.S. Senators on Twitter
 - Mention Network
 - Topic Extraction from Tweets
 - Case Study: Russia Investigation
+
+![4](thumbnails/4.png)
